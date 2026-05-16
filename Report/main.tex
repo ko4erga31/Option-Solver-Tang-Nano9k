@@ -85,28 +85,124 @@ d_1 = \frac{ln\frac{S}{K}+ \big(r + \frac{\sigma^2}{2}\big)T}{\sigma\sqrt{T}}, \
 \subsection{Как посчитать $\Phi(x)$?}
 \textbf{Нормальное распределение}, также называемое распределением Гаусса или Гаусса-Лапласа, или колоколообразная кривая -- непрерывное распределение вероятностей с пиком в центре и симметричными боковыми сторонами, которое в одномерном случае задаётся функцией плотности вероятности, совпадающей с функцией Гаусса:
 \[
-f(x) = \frac{1}{\sqrt{2\pi}\sigma}\operatorname{exp}\bigg({-\frac{1}{2}\Big(\frac{x-\mu}{\sigma}\Big)^2}\bigg)
+f(x) = \frac{1}{\sqrt{2\pi}\sigma}\operatorname{exp}\bigg({-\frac{1}{2}\Big(\frac{x-\mu}{\sigma}\Big)^2}\bigg).
 \]
 
 \textbf{Стандартным нормальным распределением} называется нормальное распределение с математическим ожиданием $\mu = 0$ и стандартным отклонением $\sigma = 1$. Его функция плотности веротяности будет:
 \[
-\varphi(x) = \frac{1}{\sqrt{2\pi}}\operatorname{exp}\bigg({-\frac{x^2}{2}}\bigg)
+\varphi(x) = \frac{1}{\sqrt{2\pi}}\operatorname{exp}\bigg({-\frac{x^2}{2}}\bigg).
 \]
 
 \textbf{Функция распределения стандартного нормального распределения} (нормальное интегральное распределение) обычно обозначается заглавной греческой буквой $\Phi$, в русскоязычной литературе называется функцией Лапласа и представляет собой интеграл:
 \[
-\Phi(x) = \frac{1}{\sqrt{2\pi}}\int\limits_{-\infty}^{x}e^{-\frac{t^2}{2}}dt
+\Phi(x) = \frac{1}{\sqrt{2\pi}}\int\limits_{-\infty}^{x}e^{-\frac{t^2}{2}}dt.
 \]
 
-Итого:
+Введем функцию ошбок $\operatorname{erf} x$ как:
 \[
-N(d_1) = \frac{1}{\sqrt{2\pi}}\int\limits_{-\infty}^{d_1}e^{-\frac{t^2}{2}}dt
-\]
-\[
-N(d_2) = \frac{1}{\sqrt{2\pi}}\int\limits_{-\infty}^{d_2}e^{-\frac{t^2}{2}}dt
+\operatorname{erf} x = \frac{2}{\sqrt{\pi}}\int\limits_{0}^{x}e^{-\frac{t^2}{2}}dt.
 \]
 
-Нужно как-то уметь вычислять это интеграл, так как он вообще говоря не берущийся...
+Тогда функцию Лапласа можно выразить через эту функцию:
+\[
+\Phi(x) = \frac{1}{2}\Bigg[ 1 + \operatorname{erf}\bigg(\frac{x}{\sqrt{2}}\bigg) \Bigg].
+\]
+
+Используя этот факт и рациональные приближения функции ошибок и будем вычислять $\Phi(x)$. Одним из достаточно точных и удобных приближений для функции ошибок является формула 7.1.26, приведённая в справочнике Абрамовица и Стигана \lbrack\ref{book:Handbook}, с. 299\rbrack]. Нужно иметь ввиду, что приведенная ниже формула корректна для $0 \leq x < \infty$.
+\[
+\operatorname{erf}x = 1 - (a_1t + a_2t^2 + a_3t^3 + a_4t^4 + a_5t^5)e^{-x^2} + \epsilon(x),
+\]
+\[
+t = \frac{1}{1 + px},
+\]
+\[
+|\epsilon(x)| \leq 1.5\cdot 10^{-7}.
+\]
+\[
+p = 0.32759111, \quad a_1 = 0.254829592,
+\]
+\[
+a_2 = -0.284496736, \quad a_3 = 1.421413741,
+\]
+\[
+a_4 = -1.453152027, \quad a_5 = 1.061405429.
+\]
+
+Таким образом
+\[
+\Phi(x) \approx 1 - \frac{1}{2}(a_1t + a_2t^2 + a_3t^3 + a_4t^4 + a_5t^5)e^{-\frac{x^2}{2}}, \quad t = \frac{1}{1 + p\frac{x}{\sqrt{2}}}.
+\]
+
+Сразу вычислим $p / \sqrt{2}$, чтобы не тратить на это время каждую итерацию:
+\[
+p' = \frac{p}{\sqrt{2}} = \frac{ 0.32759111}{\sqrt{2}} \approx 0.231641893.
+\]
+
+При вычислении значения $P(t) = (a_1t + a_2t^2 + a_3t^3 + a_4t^4 + a_5t^5)$ в точке $t_0$ воспользуемся схемой Горнера. Определим последовательность
+\[
+b_5 = a_5,
+\]
+\[
+b_4 = a_4 + b_5 \cdot t_0,
+\]
+\[
+b_3 = a_3 + b_4\cdot t_0,
+\]
+\[
+b_2 = a_2 + b_3\cdot t_0,
+\]
+\[
+b_1 = a_1 + b_2 \cdot t_0.
+\]
+
+Тогда искомое значение выражения будет:
+\[
+P(t_0) = t_0 \cdot b_1 = b.
+\]
+
+Перепишем
+\[
+\Phi(x) \approx 1 - \frac{1}{2}be^{-\frac{x^2}{2}}
+\]
+
+Осталось только научиться вычислять показательную функцию. Как известно:
+\[
+e^{-\frac{x^2}{2}} = e^{-\operatorname{ln}2 \frac{x^2}{2\cdot \operatorname{ln}2}} = 2^{-\frac{x^2}{2\cdot \operatorname{ln2}}} = 2^y.
+\]
+\[
+y = -\frac{x^2}{q}, \quad q = 2 \operatorname{ln}2 = 1.386294361.
+\]
+\[
+2^y = 2^{\lfloor y \rfloor} \cdot 2^{\{ y \} }.
+\]
+
+Вычислить 2 в целой степени можно сдвигами, а так как дробная часть $y$ мала, $2^{\{ y \} }$ можно разложить в ряд Маклорена (возьмем разложение до 5-й степени). Далее для вычисления полинома Тейлора можно снова использовать схему Горнера (используем аналогичные обозначения с точностью до букв):
+\[
+2^u = 1 + u \operatorname{ln}2 + u^2 \frac{\operatorname{ln}^22}{2}  + u^3\frac{\operatorname{ln}^32}{6} + u^4 \frac{\operatorname{ln}^42}{24} + u^5 \frac{\operatorname{ln}^52}{120} + O(u^6).
+\]
+\[
+c_0 = 1, \quad
+c_1 = \operatorname{ln}2 \approx 0.693147181, \quad
+c_2 = \frac{\operatorname{ln}^22}{2} \approx 0.240226507, \quad
+\]
+\[
+c_3 = \frac{\operatorname{ln}^32}{6} \approx 0.055504109,
+c_4 = \frac{\operatorname{ln}^42}{24} \approx 0.009618129, \quad
+c_5 = \frac{\operatorname{ln}^52}{120} \approx 0.001333356.
+\]
+
+Таким образом:
+\[
+e^{-\frac{x^2}{2}} \approx \Bigg[ y = -\frac{x^2}{p} \Bigg] \approx 2^{\lfloor y\rfloor} \cdot c, \quad 2^{\lfloor y\rfloor} = \overline{2}
+\]
+\[
+\Phi(x) \approx 1 - \frac{1}{2}b\cdot \overline{2} \cdot c, \quad 0 \leq x \leq \infty.
+\]
+
+Для вычисления функции Лапласа для отрицательных аргументов будем пользовать симметрией:
+\[
+\Phi(-x) = 1 - \Phi(x). 
+\]
 \[
 \textbf{ТУТ ЯВНО НУЖНО ЧТО-ТО  ЕЩЕ}
 \]
@@ -118,4 +214,10 @@ N(d_2) = \frac{1}{\sqrt{2\pi}}\int\limits_{-\infty}^{d_2}e^{-\frac{t^2}{2}}dt
 \[
 \textbf{ТУТ ЯВНО НУЖНО ЧТО-ТО  ЕЩЕ}
 \]
+\section{Список использованных источников}
+
+\begin{enumerate}
+\item Abramowitz M., Stegun I. A. Handbook of Mathematical Functions with Formulas, Graphs and Mathematical Tables. -- Washington : U.S. Government Printing Office, 1964
+\label{book:Handbook}
+\end{enumerate}
 \end{document}
