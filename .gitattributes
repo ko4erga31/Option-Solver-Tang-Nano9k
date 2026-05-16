@@ -1,0 +1,6 @@
+*.v linguist-language=Verilog
+*.sv linguist-language=SystemVerilog
+
+*.fs linguist-vendored
+
+*.cst linguist-vendored
