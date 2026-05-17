@@ -1,3 +1,6 @@
+// Use -I flag to compile, for example iverilog -g2012 -I ~/Option-Solver-Tang-Nano9k/VerilogSimulation/Exponent -o sim normalCDF*
+
+`include "exponent.sv"
 function automatic real normalCDF(input real x);
     real p, a1, a2, a3, a4, a5;
     real t, b, polynom;
