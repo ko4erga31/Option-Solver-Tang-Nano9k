@@ -1,5 +1,7 @@
 `include "exponent.sv"
 `include "normalCDF.sv"
+`include "sqrt.sv"
+`include "ln.sv"
 
 function automatic real bs_price(
     input int option_type,
@@ -9,8 +11,8 @@ function automatic real bs_price(
     if (T <= 0.0 || sigma <= 0.0)
         return 0.0;
 
-    d1 = ($ln(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * $sqrt(T));
-    d2 = d1 - sigma * $sqrt(T);
+    d1 = ($ln(S / K) + (r + 0.5 * sigma * sigma) * T) / (sigma * sqrt(T));
+    d2 = d1 - sigma * sqrt(T);
 
     if (option_type == 0) begin // Call
         price = S * normalCDF(d1) - K * exp(-r * T) * normalCDF(d2);
